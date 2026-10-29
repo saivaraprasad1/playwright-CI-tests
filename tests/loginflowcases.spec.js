@@ -20,3 +20,22 @@ test('invalid credentials', async ({page}) => {
     console.log(await error.textContent());
     await expect(error).toHaveText('Epic sadface: Username and password do not match any user in this service');
 })
+
+test('Add to cart scenario', async ({page}) => {
+    const login = new LoginPage(page);
+    await login.url();
+    await login.login('standard_user','secret_sauce');
+    await expect(page).toHaveTitle('Swag Labs');
+    await page.locator('#add-to-cart-sauce-labs-backpack').click();
+    await page.locator('#add-to-cart-sauce-labs-bike-light').click();
+    await page.locator('//a[@aria-label="Cart, 2 items"]').click();
+    await page.locator('#checkout').click();
+    await page.locator('#first-name').fill('John');
+    await page.locator('#last-name').fill('Doe');
+    await page.locator('#postal-code').fill('12345');
+    await page.locator('#continue').click();
+    await expect(page).toHaveURL('https://www.saucedemo.com/checkout-step-two.html');
+    await page.locator('#finish').click();
+    await expect(page).toHaveURL('https://www.saucedemo.com/checkout-complete.html');
+
+})
